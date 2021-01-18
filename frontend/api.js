@@ -1,12 +1,17 @@
 export default class APIHandler {
   constructor() {
+    this.dummyDate = [
 
+    ];
   }
 
   // TODO: 전체 카드 객체 리스트 반환. 없으면 NULL
-  async getCards() {    
-
-    return null;
+  async getCards() { 
+    if(this.dummyDate.length==0){
+      return null;
+    }else{
+      return dummyDate;
+    }
   }
 
   // TODO: 카드 객체 생성/추가 후 ID 반환
