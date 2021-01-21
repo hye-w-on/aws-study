@@ -5,7 +5,7 @@ var documentClient = new AWS.DynamoDB.DocumentClient({
 const tableName = "Cards";
 
 exports.handler = async event => {
-    console.log("Received: " + JSON.stringify(event, null, 2));
+    console.log("Received: " + JSON.stringify(event, null, 2)); //couldwatch 상에서 전달받은 데이터를 확인하기 위함
     let response = "";
     try {
       var params = {
