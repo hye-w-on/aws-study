@@ -1,35 +1,46 @@
 export default class APIHandler {
-  constructor() {
-    this.dummyDate = [];
-  }
+  constructor() {}
 
   // TODO: 전체 카드 객체 리스트 반환. 없으면 NULL
   async getCards() {
-    if (this.dummyDate.length == 0) {
-      return null;
+    const request = new APIRequest("GET", "/kanban/cards");
+    const response = await APIProcessor(request);
+    if (response !== "Error") {
+      console.log(response);
+      return response.Items;
     } else {
-      return dummyDate;
+      return null;
     }
   }
 
   // TODO: 카드 객체 생성/추가 후 ID 반환
   async postCard(cardObj) {
-    return Math.round(Math.random() * 10000).toString();
+    const request = new APIRequest("POST", "/kanban/cards", {
+      title: cardObj.title,
+      category: cardObj.category,
+    });
+    const response = await APIProcessor(request);
+    if (response !== "Error") {
+      console.log(response);
+      return response.Items;
+    } else {
+      return null;
+    }
   }
 
   // TODO: ID로 카드 검색 후 내용,카테고리 수정
-  async putCard(cardObj) {}
+  async putCard(cardObj) {
+    const request = new APIRequest("PUT", `/kanban/cards/${cardObj.id}`, {
+      title: cardObj.title,
+      category: cardObj.category,
+    });
+    const response = await APIProcessor(request);
+  }
 
   // TODO: ID로 카드 검색 후 삭제
-  async deleteCard(id) {}
-}
-// TODO: API 요청 컨테이너. Method, Path, Body 속성
-class APIRequest {
-  constructor(method, path, body = null) {
-    //전체조회인 get의 경우 body가 불필요, 디폴트를 null
-    this.method = method;
-    this.path = path;
-    this.body = body;
+  async deleteCard(id) {
+    const request = new APIRequest("DELETE", `/kanban/cards/${id}`);
+    const response = await APIProcessor(request);
   }
 }
 
@@ -43,6 +54,7 @@ class APIRequest {
     this.body = body;
   }
 }
+
 // TODO: API 호출 함수
 const APIProcessor = async (request) => {
   try {
@@ -53,15 +65,15 @@ const APIProcessor = async (request) => {
       headers: {
         "Content-Type": "application/json", //보낼 때 형식
         Accept: "application/json", //받을 때 형식
-        "x-api-key": "XXNmmXO9be1rPTLAeLrXW5FqNvhlxLvv5RZ6fLBy",
+        "x-api-key": "nBst7SSvbS6BGi6jSSom256CYYLYqjh51NTj9h51",
       },
       body: request.body ? JSON.stringify(request.body) : null, // body data type must match "Content-Type" header
     });
     switch (response.status) {
-      case 200:
-      case 201:
-        return await response.json();
-      case 204:
+      case 200: //get : List를 반환
+      case 201: //create : id를 반환
+        return await response.json(); //JSON으로 변환
+      case 204: // 요청은 성공했으나 돌려줄 값이 없을때 update,delete
         return null;
       default:
         console.error(await response.json());

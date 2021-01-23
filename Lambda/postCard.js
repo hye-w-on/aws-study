@@ -1,10 +1,10 @@
 var AWS = require("aws-sdk");
 var documentClient = new AWS.DynamoDB.DocumentClient({
-  apiVersion: "2012-08-10"
+  apiVersion: "2012-08-10",
 });
 const tableName = "Cards";
 
-exports.handler = async event => {
+exports.handler = async (event) => {
   console.log("Received: " + JSON.stringify(event, null, 2));
   let response = "";
   try {
@@ -15,20 +15,26 @@ exports.handler = async event => {
       Item: {
         id: id,
         title: body.title,
-        category: body.category
-      }
+        category: body.category,
+      },
     };
     await documentClient.put(params).promise(); //DB에 put
 
     response = {
-      statusCode: 200,
-      body: JSON.stringify({ id: id })
+      statusCode: 201,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({ id: id }),
     };
   } catch (exception) {
     console.error(exception);
     response = {
       statusCode: 500,
-      body: JSON.stringify({ "Message: ": exception })
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({ "Message: ": exception }),
     };
   }
   return response;
